@@ -30,7 +30,7 @@ vector<float> mux1Vals = {0,0,0,0,0,0,0,0};
 void setup() 
 {   
     Serial.begin(9600); // serial output to print out the sensor values
-    delay(5000);
+    delay(5000);        // included only to allow vscode + platformio to catch the first Serial print calls.
     Serial.println("Serial init complete");
     ads.begin();  // Initialize ads1115 at the default address 0x48
     for (int i=0; i < 3; i++) 
@@ -63,4 +63,4 @@ void loop() {
             outTime = millis();
         }
     }   
-};
+}
