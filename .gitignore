@@ -1,4 +1,7 @@
 .pio/
 .vscode/
-test/
-*.code-workspace	
+test/*
+*.code-workspace
+
+include/appendLineToFile.h
+src/appendLineToFile.cpp
