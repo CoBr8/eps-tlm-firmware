@@ -1,6 +1,7 @@
 #include <Arduino.h>
+#include "selectMuxPin.h"
 
-void selectMuxPin(byte pin, int sZero, int sOne, int sTwo) {
+void selectMuxPin(byte pin, int selectPins[3]) {
 /******************************************************
 * Function name  : void selectMuxPin(byte pin)
 * returns        : void
@@ -27,7 +28,6 @@ void selectMuxPin(byte pin, int sZero, int sOne, int sTwo) {
 				L:= low voltage 
 				X:= disregarded
 *******************************************************/
-  const int selectPins[3] = {sZero, sOne, sTwo};
   if (pin > 7) return; // Exit if pin is out of scope
   for (int i=0; i<3; i++)
   {
@@ -35,5 +35,5 @@ void selectMuxPin(byte pin, int sZero, int sOne, int sTwo) {
       digitalWrite(selectPins[i], HIGH);
     else
       digitalWrite(selectPins[i], LOW);
-  }
-}
+  };
+};
