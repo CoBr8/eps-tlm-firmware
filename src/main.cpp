@@ -14,20 +14,23 @@ int timeMod = 2; // divisor, used to decrease the interval times for testing. se
 
 int adcPins[4] {0, 1, 2, 3}; // ADC pin numbers to stop from unnamed numbers popping up
 
-int mux1S [3] {5,  6,  7  };    // Mux channel select pins for the 1st mux
-int mux2S [3] {8,  9,  10 };
-int mux3S [3] {11, 12, 13 };
-int mux4S [3] {14, 15, 16 };
-
-unsigned long muxTimes [32] {0, 0, 0, 0, 0, 0, 0, 0};
-unsigned long muxIntrvl [32] {20000,  90000,  90000,  90000,  20000,  20000,  270000, 270000,\
+int muxS [3] {5,  6,  7 }; 
+/* muxS:
+* All muxes could use the same three pins to do selection. Since we loop we're only ever pulling
+*  information from one ADS pin at a time.
+*/
+unsigned long muxTimes [32] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+/* muxTimes:
+* keeping track of the time since the sensor was last polled. initially none of them are polled 
+*/
+unsigned long muxIntrvl [32] { 20000,  90000,  90000,  90000,  20000,  20000, 270000, 270000,\
                               270000, 270000, 270000, 270000, 270000, 270000, 270000, 270000,\
-                              270000, 270000, 270000, 270000, 270000, 270000, 270000, 270000,\
-                              270000, 270000, 270000, 270000, 270000, 270000, 270000, 270000,\
-                             };
-unsigned long outTime=0;
+                              270000,  90000,  90000, 270000,  90000,  90000,  90000,  90000,\
+                               90000,  90000,  90000,  20000,  20000, 270000,  30000,  30000,\
+                             }; // last two 30s sensors are not utilized.
+unsigned long outTime=0; // keeping track of the last time we sent data over Serial
 const unsigned long printIntrvl=10000; // output sensor data every 10 seconds.
-vector<float> muxVals = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+vector<float> muxVals = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; // init all mux values to start at zero. 
 
 Adafruit_ADS1115 ads;	// Construct an ads1115 instance to read single ended values
 
@@ -38,7 +41,7 @@ void setup()
     ads.setGain(GAIN_ONE);
     for (int i=0; i < 3; i++) 
     {
-        pinMode(mux1S[i], OUTPUT);
+        pinMode(muxS[i], OUTPUT);
     }
 }
 void loop() {
@@ -48,7 +51,7 @@ void loop() {
         {
             if (millis() - muxTimes[muxPin] > muxIntrvl[muxPin] / timeMod)  // check if the last time the pin was polled is greater than the sampling interval
             {
-                selectMuxPin(muxPin, mux1S);  // switches the mux to the pin we're interested in
+                selectMuxPin(muxPin, muxS);  // switches the mux to the pin as defined by loop
                 vector<float> sensVals = collectSamples(pin, ads);  // returns a vector of 20 sensor readings over 1 second. 
                 float sensVal = avgVal(sensVals);
                 muxVals[muxPin + pin*8] = sensVal;
