@@ -1,1 +1,1 @@
-void selectMuxPin(byte pin, int selectPins[3]);
+void selectMuxPin(byte pin, int selectPins [3]);
